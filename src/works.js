@@ -4,7 +4,7 @@ import { PARAMS, IS_TOUCH, isPortrait } from './params.js';
 import { CASES } from './content.js';
 
 const ART = ['kimi', 'caramel', 'vibe', 'site', 'news', 'media'];
-let art = null, artImgs = [], shownIdx = -1;
+let art = null, shownIdx = -1;
 let tappedIdx = -1;   // 触屏:首次点按只出便签/相框,二次点按才开窗
 
 function applyArtProps(i) {
@@ -14,8 +14,7 @@ function applyArtProps(i) {
   const margin = innerWidth < 1024 ? 16 : 56;
   const xPx = Math.abs(A.xOff / 100 * innerWidth);
   const yPx = Math.abs(A.yOff / 100 * innerHeight);
-  const im = artImgs[i];
-  const ar = im && im.naturalWidth && im.naturalHeight ? im.naturalWidth / im.naturalHeight : 2;
+  const ar = art.naturalWidth && art.naturalHeight ? art.naturalWidth / art.naturalHeight : 2;
   const limit = Math.min(innerWidth - margin * 2 - xPx * 2, (innerHeight - margin * 2 - yPx * 2) * ar * 0.96) / A.scale;
   const w = Math.max(200, Math.min(1250 * A.scale, innerWidth * 0.96, limit));
   art.style.setProperty('--art-w', `${Math.round(w)}px`);
@@ -31,17 +30,8 @@ export const works = {
   init(enterDetail) {
     const root = document.getElementById('cards');
     art = document.getElementById('case-art');
-    // 六张背景插画全部预载为叠层 img:切换只动透明度,不再换 src(避免拉取/光栅化卡顿)
-    artImgs = ART.map((name, i) => {
-      const im = new Image();
-      im.src = `assets/img/case-art/${name}.svg`;
-      im.alt = '';
-      im.draggable = false;
-      im.addEventListener('load', () => { if (shownIdx === i) applyArtProps(i); });
-      im.decode?.().catch(() => {});
-      art.appendChild(im);
-      return im;
-    });
+    // SVG 尺寸就绪后重算一次相框收敛(首个展示前 naturalWidth 可能为 0)
+    art.addEventListener('load', () => { if (shownIdx >= 0) applyArtProps(shownIdx); });
     const g = PARAMS.gallery;
     root.style.setProperty('--overlap', g.overlapVw + 'vw');
     const doc = document.documentElement.style;
@@ -218,7 +208,7 @@ export const works = {
 
   showFrame(i) {
     shownIdx = i;
-    artImgs.forEach((im, j) => im.classList.toggle('cur', j === i));
+    art.src = `assets/img/case-art/${ART[i]}.svg`;
     applyArtProps(i);
     art.classList.add('show');
   },

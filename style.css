@@ -463,16 +463,6 @@ body {
   transform: translate(calc(-50% + var(--art-x, 0vw)), calc(-50% + var(--art-y, 0vh)))
              rotate(var(--art-rot, -0.5deg)) scale(var(--art-scale, 1));
 }
-/* 六张插画预载叠层:切换只动透明度,不再换 src(避免拉取/光栅化卡顿) */
-#case-art img {
-  position: absolute; left: 0; top: 0;
-  width: 100%; height: auto;
-  transform: translateY(-50%);   /* 容器是零高的 div,垂直居中由每张图自己完成 */
-  opacity: 0;
-  transition: opacity 0.24s ease;
-  user-select: none; -webkit-user-drag: none;
-}
-#case-art img.cur { opacity: 1; }
 
 /* ---------- 详情窗口(液态玻璃,可多开/拖动/缩放) ---------- */
 #windows {
