@@ -25,6 +25,10 @@ export function initCatSticker() {
       gsap.to(el, { rotation: 0, duration: 0.8, ease: 'power2.out' });
     },
   });
+  // 兜底:全局 pointerup/pointercancel 也恢复张手(窗口外松手、指针捕获丢失时 onRelease 可能不到)
+  const relax = () => { el.style.cursor = ''; };
+  addEventListener('pointerup', relax);
+  addEventListener('pointercancel', relax);
 
   // 点光源跟随
   const l1 = document.getElementById('catLight');
@@ -79,6 +83,10 @@ export function initOutroStickers() {
         gsap.to(el, { rotation: r, duration: 0.8, ease: 'power2.out' });
       },
     });
+    // 兜底:全局 pointerup/pointercancel 也恢复张手
+    const relax = () => { el.style.cursor = ''; el.style.zIndex = ''; };
+    addEventListener('pointerup', relax);
+    addEventListener('pointercancel', relax);
 
     // 点光源跟随(共享滤镜——指针同一时刻只在一张贴上;灰背光源按镜像坐标)
     el.addEventListener('pointermove', (e) => {
