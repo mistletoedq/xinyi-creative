@@ -40,7 +40,7 @@ html.lenis, html.lenis body { height: auto; }
   opacity: 0;
 }
 /* 卡通手套光标(PNG 版,SVG 光标在 Chrome 下滚动/悬停会丢):默认=箭头,选中=手指,可拖=手掌,拖动=拳头 */
-html { cursor: url("assets/img/cursor-hand-arrow.png") 2 2, auto; }
+html { cursor: url("assets/img/cursor-hand-arrow.png") 1 1, auto; }
 * { cursor: inherit; }
 /* 可点击元素统一手指(链接/按钮/卡片/齿轮等) */
 a, button, .card { cursor: url("assets/img/cursor-hand-point.png") 16 2, pointer; }
