@@ -138,10 +138,17 @@ function fillAbout() {
   }).catch(() => {});
 }
 
-// 头像个签位置参数 → 内联样式(面板滑杆实时生效)
+// 头像个签位置参数 → 内联样式(竖屏改放通栏卡右上角)
 function applyAvatarParams() {
   const el = document.getElementById('avatar-pop');
   if (!el) return;
+  if (isPortrait()) {
+    el.style.left = 'auto';
+    el.style.right = '14px';
+    el.style.top = '14px';
+    el.style.width = '96px';
+    return;
+  }
   const A = PARAMS.avatar;
   el.style.left = 'auto';
   el.style.right = A.right + 'px';
@@ -158,6 +165,12 @@ async function boot() {
   createGridlines();                            // haoqi 式排版网格
   if (PARAMS.dapple.enabled) dapplegl.init();
   fillAbout();
+  // 触屏:点按 about 卡的 hello 行触发头像描绘(桌面是 hover)
+  if (IS_TOUCH) {
+    document.querySelector('#about-body .hello')?.addEventListener('click', () => {
+      document.getElementById('about-body').classList.toggle('av-show');
+    });
+  }
   works.init((i) => detail.open(i));
   detail.init({
     get lenis() { return lenis; },

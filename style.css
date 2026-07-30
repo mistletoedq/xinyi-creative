@@ -697,6 +697,8 @@ a.cm-value { color: var(--ink); text-underline-offset: 4px; }
   pointer-events: none;
   font-variant-numeric: tabular-nums;
 }
+/* 开着详情窗时,坐标压到窗口层(#windows z400)之下 */
+body:has(#windows .wm-window) #coords { z-index: 1; }
 
 /* ---------- 入场动画(src/intro.js 编排;pending 期间藏起 hero 与 UI) ---------- */
 html.intro-pending .hero-item,
@@ -774,7 +776,13 @@ html.intro-pending #topnav {
   }
   .card:hover .case-tag, .card.tag-show .case-tag { transform: translate(-50%, 0); }
   .case-tag .ct-lines { display: none; }
-  #avatar-pop { display: none; }   /* 竖屏 about 通栏,左侧没有留白 */
+  /* 竖屏:头像个签放到通栏卡右上角,点按 hello 行触发描绘(触屏无 hover) */
+  #avatar-pop { right: 14px; top: 14px; width: 96px; }
+}
+/* 点按 hello 触发头像描绘(与 hover 同款规则) */
+#about-body.av-show #avatar-pop .avatar-svg path {
+  stroke-dashoffset: 0;
+  fill-opacity: 1;
 }
 @media (max-width: 760px) {
   .card { max-width: 26vw; }

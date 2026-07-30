@@ -101,8 +101,21 @@ export const works = {
     const r = card.getBoundingClientRect();
     if (isPortrait()) {           // 竖屏:卡片居中(配合 CSS 的 translate(-50%))
       tag.style.left = (innerWidth / 2 - r.left) + 'px';
-      // 位置限制:标签向上不越入顶部导航区;放不下就改挂切片下方
-      if (r.top - 18 - tag.offsetHeight < 76) {
+      // 位置限制:上方不压顶栏(76px);3×2 网格中下排片的标签上挂会盖住上排片,与任一切片相交就改挂下方
+      const tagH = tag.offsetHeight;
+      let above = r.top - 18 - tagH >= 76;
+      if (above) {
+        const tagTop = r.top - 18 - tagH;
+        for (const other of document.querySelectorAll('.card')) {
+          if (other === card) continue;
+          const o = other.getBoundingClientRect();
+          if (tagTop < o.bottom && r.top - 18 > o.top) { above = false; break; }
+        }
+      }
+      if (above) {
+        tag.style.top = 'auto';
+        tag.style.bottom = 'calc(100% + 18px)';
+      } else {
         tag.style.top = 'calc(100% + 18px)';
         tag.style.bottom = 'auto';
       }
