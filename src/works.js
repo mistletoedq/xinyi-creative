@@ -207,9 +207,4 @@ export const works = {
     if (i >= 0) this.showFrame(i);
     else this.hideFrame();
   },
-
-  // 面板调参时,正在展示的相框同步最新参数
-  refreshFrame() {
-    if (shownIdx >= 0) applyArtProps(shownIdx);
-  },
 };

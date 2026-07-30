@@ -2,7 +2,7 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
-import { PARAMS, REDUCED, IS_TOUCH, isPortrait, portraitHeroTransform, computeAppleMobile, remap, applyParams, decodeParams, writeParamsHash, heroFit } from './params.js';
+import { PARAMS, REDUCED, IS_TOUCH, isPortrait, portraitHeroTransform, computeAppleMobile, remap, heroFit } from './params.js';
 import { scene3d } from './scene3d.js';
 import { dapplegl } from './dapplegl.js';
 import { works } from './works.js';
@@ -11,7 +11,6 @@ import { createGridlines } from './gridlines.js';
 import { intro } from './intro.js';
 import { preloader } from './preloader.js';
 import { initCatSticker, initOutroStickers } from './sticker.js';
-import { togglePanel, syncPanelPage } from './debugpanel.js';
 import { ABOUT } from './content.js';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -156,11 +155,6 @@ async function boot() {
   history.scrollRestoration = 'manual';
   window.scrollTo(0, 0);
 
-  // URL 里的参数优先(#p=base64(JSON)),实现"链接即配置"
-  if (location.hash.startsWith('#p=')) {
-    const decoded = decodeParams(location.hash.slice(3));
-    if (decoded) applyParams(decoded);
-  }
   createGridlines();                            // haoqi 式排版网格
   if (PARAMS.dapple.enabled) dapplegl.init();
   fillAbout();
@@ -243,10 +237,10 @@ async function boot() {
     }, { passive: true });
     const dotHover = (on) => gsap.to(dot, { scale: on ? 1.7 : 1, duration: 0.25, ease: 'power2.out' });
     addEventListener('pointerover', (e) => {
-      if (e.target.closest('a, button, .card, #panel-hint, .wm-bar')) dotHover(true);
+      if (e.target.closest('a, button, .card, .wm-bar')) dotHover(true);
     });
     addEventListener('pointerout', (e) => {
-      if (e.target.closest('a, button, .card, #panel-hint, .wm-bar')) dotHover(false);
+      if (e.target.closest('a, button, .card, .wm-bar')) dotHover(false);
     });
     document.addEventListener('pointerleave', () => gsap.to(dot, { opacity: 0, duration: 0.2 }));
     document.addEventListener('pointerenter', () => { if (dotShown) gsap.to(dot, { opacity: 1, duration: 0.2 }); });
@@ -403,48 +397,6 @@ async function boot() {
     g.drawImage(gl, 0, 0, c.width, c.height);
     return c.toDataURL('image/jpeg', 0.55).split(',')[1];
   };
-  window.__detail = detail;
-  window.__P = PARAMS;   // 面板/控制台实时调参入口
-  window.__layout = applyHeroLayout;
-
-  // 调试面板:改动实时写 URL(防抖),链接即配置
-  let hashTimer = 0;
-  const onParamChange = () => {
-    document.getElementById('scrollzone').style.height = PARAMS.scroll.totalVh + 'vh';
-    applyHeroLayout();
-    applyAvatarParams();
-    dispatch(currentT);
-    ScrollTrigger.refresh();
-    // 相框正在展示时同步最新参数
-    works.refreshFrame();
-    // 已打开的详情窗口同步玻璃参数
-    detail.applyParams();
-    clearTimeout(hashTimer);
-    hashTimer = setTimeout(writeParamsHash, 400);
-  };
-  // 当前所在页(1 hero / 2 about / 3 works),面板按页分组
-  const currentPage = () => {
-    const y = scrollY;
-    const heroEnd = document.getElementById('scrollzone').offsetHeight - innerHeight;
-    const worksTop = document.getElementById('works').offsetTop;
-    if (y < heroEnd - 4) return 1;
-    // works 区高度不足一屏,用视野中线判定而不是顶部到顶
-    if (y + innerHeight * 0.6 < worksTop) return 2;
-    return 3;
-  };
-  let pageTimer = 0;
-  lenis.on('scroll', () => {
-    clearTimeout(pageTimer);
-    pageTimer = setTimeout(() => syncPanelPage(currentPage()), 120);
-  });
-
-  addEventListener('keydown', (e) => {
-    if ((e.key === 'd' || e.key === 'D') && !e.metaKey && !e.ctrlKey
-        && !/INPUT|TEXTAREA/.test(document.activeElement?.tagName || '')) {
-      togglePanel(onParamChange, currentPage());
-    }
-  });
-  document.getElementById('panel-hint').addEventListener('click', () => togglePanel(onParamChange, currentPage()));
   // 入场:先播加载动画(加载条 → 文字圈 → 模糊消散),再 hero 入场;播完/跳过才开放鼠标视差
   initCatSticker();   // 右下角小猫贴纸:折角 + 拖拽
   initOutroStickers();   // 结束页焦糖贴纸环

@@ -42,7 +42,7 @@ html.lenis, html.lenis body { height: auto; }
 /* 卡通手套光标(PNG 版,SVG 光标在 Chrome 下滚动/悬停会丢):默认/可点击=手指,拖拽=手掌/拳头 */
 html { cursor: url("assets/img/cursor-hand-point.png") 16 2, auto; }
 * { cursor: inherit; }
-.card, #panel-hint { cursor: url("assets/img/cursor-hand-point.png") 16 2, pointer; }
+.card { cursor: url("assets/img/cursor-hand-point.png") 16 2, pointer; }
 
 body {
   font-family: "TikTok", "Noto Sans SC", "PingFang SC", "Source Han Sans SC", sans-serif;
@@ -685,18 +685,7 @@ body {
 .cm-value { font-size: clamp(16px, 1.6vw, 20px); font-weight: 500; }
 a.cm-value { color: var(--ink); text-underline-offset: 4px; }
 
-/* ---------- 调试入口 ---------- */
-#panel-hint {
-  position: fixed; right: 14px; bottom: 14px;
-  width: 34px; height: 34px;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 50%;
-  background: rgba(26, 23, 20, 0.08);
-  cursor: url("assets/img/cursor-hand-point.png") 16 2, pointer; z-index: 3000;
-  font-size: 16px; opacity: 0.5;
-}
-#panel-hint:hover { opacity: 1; }
-/* 左下角装饰坐标:数字藏进伪数学公式(仿 haoqi 的技术装饰);与左上角 brand 同字号、镜像对齐 */
+/* ---------- 左下角装饰坐标:数字藏进伪数学公式(仿 haoqi 的技术装饰);与左上角 brand 同字号、镜像对齐 ---------- */
 #coords {
   position: fixed; left: 56px; bottom: 28px;
   z-index: 500;
@@ -708,14 +697,6 @@ a.cm-value { color: var(--ink); text-underline-offset: 4px; }
   pointer-events: none;
   font-variant-numeric: tabular-nums;
 }
-/* tweakpane 默认 absolute 定位在文档顶部,滚动后飞出视口;强制 fixed 悬浮 */
-.tp-dfwv.tp-dfwv {
-  position: fixed !important;
-  top: 8px !important;
-  right: 8px !important;
-  z-index: 3001 !important;
-}
-.tp-panel-hidden { display: none !important; }
 
 /* ---------- 入场动画(src/intro.js 编排;pending 期间藏起 hero 与 UI) ---------- */
 html.intro-pending .hero-item,
@@ -724,13 +705,11 @@ html.intro-pending .nav-link,
 html.intro-pending #contact,
 html.intro-pending #coords,
 html.intro-pending #scroll-hint,
-html.intro-pending #panel-hint,
 html.intro-pending #gridlines {
   opacity: 0;
 }
 html.intro-pending #brand,
-html.intro-pending #topnav,
-html.intro-pending #panel-hint {
+html.intro-pending #topnav {
   pointer-events: none;
 }
 

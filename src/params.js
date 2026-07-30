@@ -166,24 +166,3 @@ export function computeAppleMobile() {
   };
 }
 
-// —— 参数持久化:改动实时写进 URL(#p=base64(JSON)),链接即配置 ——
-export function encodeParams() {
-  return btoa(unescape(encodeURIComponent(JSON.stringify(PARAMS))));
-}
-export function decodeParams(str) {
-  try { return JSON.parse(decodeURIComponent(escape(atob(str)))); }
-  catch { return null; }
-}
-// 深合并(只覆盖已有 key 的叶子值,容忍旧版本链接缺字段)
-export function applyParams(src, dst = PARAMS) {
-  for (const k of Object.keys(dst)) {
-    if (src && typeof src[k] === 'object' && src[k] !== null && typeof dst[k] === 'object' && dst[k] !== null && !Array.isArray(dst[k])) {
-      applyParams(src[k], dst[k]);
-    } else if (src && src[k] !== undefined) {
-      dst[k] = src[k];
-    }
-  }
-}
-export function writeParamsHash() {
-  history.replaceState(null, '', '#p=' + encodeParams());
-}

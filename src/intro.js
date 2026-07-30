@@ -15,7 +15,6 @@ const UI = [
   { sel: '#contact', o: 1, scramble: true },
   { sel: '#coords', o: 0.55, scramble: true },
   { sel: '#scroll-hint', o: 0.45, scramble: true },
-  { sel: '#panel-hint', o: 0.5, scramble: true },
   { sel: '#gridlines', o: 1 },
 ];
 

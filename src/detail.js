@@ -213,13 +213,4 @@ export const detail = {
   },
 
   closeAll() { this.close(); },
-
-  // 面板调参时,已打开的窗口同步玻璃参数
-  applyParams() {
-    const D = PARAMS.detail;
-    for (const el of openWins.values()) {
-      el.style.setProperty('--wm-blur', D.blur + 'px');
-      el.style.setProperty('--wm-radius', D.radius + 'px');
-    }
-  },
 };
