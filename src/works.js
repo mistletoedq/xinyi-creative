@@ -152,6 +152,8 @@ export const works = {
         cap.setAttribute('x', 1); cap.setAttribute('y', 46);
         plus.setAttribute('x', 9); plus.setAttribute('y', 58);
       } else {
+        tag.style.top = 'calc(100% + 46px)';   // 覆盖此前上翻写入的内联 bottom,否则线朝上而标签仍挂上方
+        tag.style.bottom = 'auto';
         svg.style.top = '-46px';
         svg.setAttribute('viewBox', '0 0 18 46');
         svg.style.height = '46px';
@@ -185,6 +187,8 @@ export const works = {
       plus.setAttribute('x', d); plus.setAttribute('y', 58);
     } else {
       // 下方(FOUNDATION 式):标签底角 → 短水平(下划线) → 45° 斜上 → 水平到切片底缘的 + 盒
+      tag.style.top = 'calc(100% + 46px)';   // 覆盖此前上翻写入的内联 bottom,否则线朝上而标签仍挂上方
+      tag.style.bottom = 'auto';
       const H = 46 + Math.round(tag.offsetHeight);
       const d = Math.max(24, Math.round(Math.abs(markerX - exitX)));
       svg.style.top = '-46px';
