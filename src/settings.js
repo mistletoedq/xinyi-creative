@@ -21,24 +21,38 @@ function getBgm() {
   }
   return bgm;
 }
-let kickArmed = false;
-function startBgm() {
+let bgmStarted = false;
+let disarmGesture = null;
+function fadeInBgm() {
+  bgmStarted = true;
+  disarmGesture?.();
   const a = getBgm();
-  a.play()
-    .then(() => gsap.to(a, { volume: 0.35, duration: 1.2, ease: 'power1.out' }))
-    .catch(() => {
-      if (kickArmed) return;
-      kickArmed = true;
-      const kick = () => {
-        a.play().then(() => gsap.to(a, { volume: 0.35, duration: 1.2, ease: 'power1.out' })).catch(() => {});
-        document.removeEventListener('pointerdown', kick);
-      };
-      document.addEventListener('pointerdown', kick);
-    });
+  gsap.to(a, { volume: 0.35, duration: 1.2, ease: 'power1.out' });
 }
-// 苹果出现(main.js 在加载卡上拉时调用):开关为开且未在播 → 起播
+function attemptBgm() {
+  if (bgmStarted) return;
+  const a = getBgm();
+  const p = a.play();
+  if (p) p.then(() => fadeInBgm()).catch(() => {});
+}
+// 挂一次性手势兜底:boot 时就挂(Safari 里 play() 的 promise 可能永远挂起,
+// 不能等 catch 再挂);每次手势都重试,真正开播后自动卸下
+function armGestureFallback() {
+  if (disarmGesture) return;
+  const kick = () => { if (settings.bgm && !bgmStarted) attemptBgm(); };
+  document.addEventListener('pointerdown', kick);
+  document.addEventListener('keydown', kick);
+  disarmGesture = () => {
+    document.removeEventListener('pointerdown', kick);
+    document.removeEventListener('keydown', kick);
+  };
+}
+// 苹果出现(main.js 在加载卡上拉时调用):开关为开 → 直接尝试起播;
+// 同时确保手势兜底已挂上(被自动播放策略挡时,下一次手势即开播)
 export function tryStartBgm() {
-  if (settings.bgm && getBgm().paused) startBgm();
+  if (!settings.bgm || bgmStarted) return;
+  attemptBgm();
+  armGestureFallback();
 }
 
 export function initSettings({ onRedDot } = {}) {
@@ -60,11 +74,11 @@ export function initSettings({ onRedDot } = {}) {
     rows[key].setAttribute('aria-pressed', String(on));
   };
 
-  // BGM:加载页已预载;苹果出现时由 main.js 调 tryStartBgm 起播(被浏览器挡则顺延首次手势)
+  // BGM:加载页已预载;苹果出现时由 main.js 调 tryStartBgm 起播(被浏览器挡则下一次手势开播)
   const bgm = getBgm();
   const bgmCtl = (on) => {
-    if (on) startBgm();
-    else gsap.to(bgm, { volume: 0, duration: 0.5, onComplete: () => bgm.pause() });
+    if (on) { armGestureFallback(); attemptBgm(); }
+    else { bgmStarted = false; gsap.to(bgm, { volume: 0, duration: 0.5, onComplete: () => bgm.pause() }); }
   };
   const hooks = { redDot: onRedDot, bgm: bgmCtl };
 
@@ -94,8 +108,10 @@ export function initSettings({ onRedDot } = {}) {
   });
   addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
 
-  // 初始应用:红点按存储恢复(默认开);BGM 的起播交给 main.js 在苹果出现时调 tryStartBgm
+  // 初始应用:红点按存储恢复(默认开);BGM 为开则在 boot 就挂好手势兜底——
+  // 加载页期间的点击也算数,首次手势即开播,不用等苹果出现后再交互好几次
   paint('redDot');
   paint('bgm');
   onRedDot?.(settings.redDot);
+  if (settings.bgm) armGestureFallback();
 }
