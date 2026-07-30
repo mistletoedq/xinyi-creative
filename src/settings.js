@@ -9,6 +9,38 @@ const store = {
 
 export const settings = { redDot: true, bgm: true };
 
+// BGM 单例:加载页预载同一个文件;苹果出现时 startBgm(被自动播放策略挡则顺延首次手势)
+let bgm = null;
+function getBgm() {
+  if (!bgm) {
+    bgm = new Audio('assets/bgm.mp3');
+    bgm.loop = true;
+    bgm.volume = 0;
+    bgm.style.display = 'none';
+    document.body.appendChild(bgm);
+  }
+  return bgm;
+}
+let kickArmed = false;
+function startBgm() {
+  const a = getBgm();
+  a.play()
+    .then(() => gsap.to(a, { volume: 0.35, duration: 1.2, ease: 'power1.out' }))
+    .catch(() => {
+      if (kickArmed) return;
+      kickArmed = true;
+      const kick = () => {
+        a.play().then(() => gsap.to(a, { volume: 0.35, duration: 1.2, ease: 'power1.out' })).catch(() => {});
+        document.removeEventListener('pointerdown', kick);
+      };
+      document.addEventListener('pointerdown', kick);
+    });
+}
+// 苹果出现(main.js 在加载卡上拉时调用):开关为开且未在播 → 起播
+export function tryStartBgm() {
+  if (settings.bgm && getBgm().paused) startBgm();
+}
+
 export function initSettings({ onRedDot } = {}) {
   const gear = document.getElementById('settings-gear');
   const pop = document.getElementById('settings-pop');
@@ -28,18 +60,11 @@ export function initSettings({ onRedDot } = {}) {
     rows[key].setAttribute('aria-pressed', String(on));
   };
 
-  // BGM:淡入淡出(开=用户手势,满足自动播放策略)
-  const bgm = new Audio('assets/bgm.mp3');
-  bgm.loop = true;
-  bgm.volume = 0;
-  bgm.style.display = 'none';
-  document.body.appendChild(bgm);
+  // BGM:加载页已预载;苹果出现时由 main.js 调 tryStartBgm 起播(被浏览器挡则顺延首次手势)
+  const bgm = getBgm();
   const bgmCtl = (on) => {
-    if (on) {
-      bgm.play().then(() => gsap.to(bgm, { volume: 0.35, duration: 1.2, ease: 'power1.out' })).catch(() => {});
-    } else {
-      gsap.to(bgm, { volume: 0, duration: 0.5, onComplete: () => bgm.pause() });
-    }
+    if (on) startBgm();
+    else gsap.to(bgm, { volume: 0, duration: 0.5, onComplete: () => bgm.pause() });
   };
   const hooks = { redDot: onRedDot, bgm: bgmCtl };
 
@@ -69,12 +94,8 @@ export function initSettings({ onRedDot } = {}) {
   });
   addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
 
-  // 初始应用:红点按存储恢复(默认关);BGM 若存的是开,等首次手势再播(自动播放限制)
+  // 初始应用:红点按存储恢复(默认开);BGM 的起播交给 main.js 在苹果出现时调 tryStartBgm
   paint('redDot');
   paint('bgm');
   onRedDot?.(settings.redDot);
-  if (settings.bgm) {
-    const kick = () => { bgmCtl(true); document.removeEventListener('pointerdown', kick); };
-    document.addEventListener('pointerdown', kick);
-  }
 }

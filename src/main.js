@@ -11,7 +11,7 @@ import { createGridlines } from './gridlines.js';
 import { intro } from './intro.js';
 import { preloader } from './preloader.js';
 import { initCatSticker, initOutroStickers } from './sticker.js';
-import { initSettings } from './settings.js';
+import { initSettings, tryStartBgm } from './settings.js';
 import { ABOUT, CASES } from './content.js';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -203,7 +203,10 @@ async function boot() {
       const im = new Image();
       im.onload = im.onerror = () => res();
       im.src = u;
-    })));
+    })).concat(
+      // BGM 一并预载(热缓存;苹果出现时即可起播)
+      fetch('assets/bgm.mp3').then((r) => r.blob()).catch(() => {}),
+    ));
   })();
 
   await Promise.all([scene3d.init(document.getElementById('gl')), preloadAssets]);
@@ -444,6 +447,7 @@ async function boot() {
   initCatSticker();   // 右下角小猫贴纸:折角 + 拖拽
   initOutroStickers();   // 结束页焦糖贴纸环
   preloader.play(lenis).then(() => { introDone = true; });
+  tryStartBgm();   // 加载卡上拉、苹果出现时起播 BGM(被自动播放策略挡则顺延首次手势)
 
   // 直达 hash(刷新在详情页时)
   const m = location.hash.match(/#\/case\/(.+)/);
