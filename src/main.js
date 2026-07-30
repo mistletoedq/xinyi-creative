@@ -12,7 +12,7 @@ import { intro } from './intro.js';
 import { preloader } from './preloader.js';
 import { initCatSticker, initOutroStickers } from './sticker.js';
 import { initSettings } from './settings.js';
-import { ABOUT } from './content.js';
+import { ABOUT, CASES } from './content.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -188,7 +188,25 @@ async function boot() {
     dispatch(currentT);
   });
 
-  await scene3d.init(document.getElementById('gl'));
+  // 加载页期间预载:六张案例插画 + content.js 里所有配图(视频除外,热缓存,切换/开窗秒开)
+  // 与 GLB 加载并行,且一并计入加载完成条件
+  const preloadAssets = (() => {
+    const urls = ['kimi', 'caramel', 'vibe', 'site', 'news', 'media']
+      .map((n) => `assets/img/case-art/${n}.svg`);
+    for (const c of CASES) {
+      for (const s of c.sections) {
+        if (s.img) urls.push(s.img);
+        if (s.imgs) urls.push(...s.imgs);
+      }
+    }
+    return Promise.allSettled(urls.map((u) => new Promise((res) => {
+      const im = new Image();
+      im.onload = im.onerror = () => res();
+      im.src = u;
+    })));
+  })();
+
+  await Promise.all([scene3d.init(document.getElementById('gl')), preloadAssets]);
 
   lenis = new Lenis({
     smoothWheel: !REDUCED,
