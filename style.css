@@ -467,6 +467,7 @@ body {
 #case-art img {
   position: absolute; left: 0; top: 0;
   width: 100%; height: auto;
+  transform: translateY(-50%);   /* 容器是零高的 div,垂直居中由每张图自己完成 */
   opacity: 0;
   transition: opacity 0.24s ease;
   user-select: none; -webkit-user-drag: none;
