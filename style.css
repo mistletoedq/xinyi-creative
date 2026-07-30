@@ -708,6 +708,7 @@ html.intro-pending #nav-toggle,
 html.intro-pending #contact,
 html.intro-pending #coords,
 html.intro-pending #scroll-hint,
+html.intro-pending #settings-gear,
 html.intro-pending #gridlines {
   opacity: 0;
 }
@@ -874,4 +875,58 @@ html.intro-pending #topnav {
   .stk { width: clamp(84px, 23vw, 140px); }
   .stk-extra { display: none; }   /* 小屏只留左右四张 */
   .outro-title { font-size: clamp(32px, 9vw, 56px); }
+}
+
+/* ---------- 设置:右下角齿轮 + 白卡纸弹层(括号开关:OFF 小括号 / ON 中括号) ---------- */
+#settings { position: fixed; right: 14px; bottom: 14px; z-index: 3000; }
+#settings-gear {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border: none; border-radius: 50%; padding: 0;
+  background: #FFFFFF; color: var(--ink);
+  box-shadow: 0 10px 30px rgba(60, 40, 30, 0.14), 0 2px 8px rgba(60, 40, 30, 0.08);
+  cursor: url("assets/img/cursor-hand-point.png") 16 2, pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+#settings-gear:hover { opacity: 1; }
+#settings-gear svg { transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+#settings-gear.open { opacity: 1; }
+#settings-gear.open svg { transform: rotate(135deg); }
+#settings-pop {
+  position: absolute; right: 0; bottom: 48px;
+  width: 212px;
+  background: #FFFFFF;
+  border-radius: 14px;
+  box-shadow: 0 24px 70px rgba(60, 40, 30, 0.16), 0 4px 16px rgba(60, 40, 30, 0.08);
+  padding: 10px;
+  transform-origin: 100% 100%;
+  opacity: 0; transform: translateY(8px) scale(0.72);
+  pointer-events: none;
+  transition: opacity 0.22s ease-out, transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+#settings-pop.open { opacity: 1; transform: none; pointer-events: auto; }
+.sp-kicker {
+  font-family: ui-monospace, monospace;
+  font-size: 10px; letter-spacing: 0.22em;
+  color: var(--red);
+  padding: 6px 10px 8px;
+}
+.sp-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  width: 100%; padding: 10px;
+  border: none; border-radius: 8px;
+  background: none;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.06em;
+  color: var(--ink);
+  cursor: url("assets/img/cursor-hand-point.png") 16 2, pointer;
+}
+.sp-row:hover { background: rgba(26, 23, 20, 0.05); }
+.sp-state { display: inline-flex; gap: 0.3em; font-style: normal; }
+.sp-state i { font-style: normal; opacity: 0.45; transition: opacity 0.15s; }
+.sp-state b { font-weight: 700; opacity: 0.45; transition: opacity 0.15s, color 0.15s; }
+.sp-row.on .sp-state i, .sp-row.on .sp-state b { opacity: 1; color: var(--red); }
+@media (max-width: 640px) {
+  #settings { right: 12px; bottom: 12px; }
 }

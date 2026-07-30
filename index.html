@@ -219,6 +219,27 @@ try {
 
 <div id="windows"></div>
 
+<!-- 设置:齿轮弹层(白卡纸 + 括号开关) -->
+<div id="settings">
+  <div id="settings-pop" aria-hidden="true">
+    <div class="sp-kicker">SETTINGS</div>
+    <button class="sp-row" data-key="redDot" aria-pressed="false">
+      <span class="sp-label">鼠标小红点</span>
+      <span class="sp-state"><i>(</i><b>OFF</b><i>)</i></span>
+    </button>
+    <button class="sp-row" data-key="bgm" aria-pressed="false">
+      <span class="sp-label">背景音乐</span>
+      <span class="sp-state"><i>(</i><b>OFF</b><i>)</i></span>
+    </button>
+  </div>
+  <button id="settings-gear" aria-label="设置" aria-expanded="false">
+    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="3.1"/>
+      <path d="M12 2.8v3.2M12 18v3.2M2.8 12h3.2M18 12h3.2M5.5 5.5l2.3 2.3M16.2 16.2l2.3 2.3M18.5 5.5l-2.3 2.3M7.8 16.2l-2.3 2.3"/>
+    </svg>
+  </button>
+</div>
+
 <div id="coords" aria-hidden="true">0000 X 0000 Y</div>
 
 <script type="module" src="src/main.js"></script>

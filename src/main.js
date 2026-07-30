@@ -11,6 +11,7 @@ import { createGridlines } from './gridlines.js';
 import { intro } from './intro.js';
 import { preloader } from './preloader.js';
 import { initCatSticker, initOutroStickers } from './sticker.js';
+import { initSettings } from './settings.js';
 import { ABOUT } from './content.js';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -240,7 +241,9 @@ async function boot() {
     const ddx = gsap.quickTo(dot, 'x', { duration: 0.38, ease: 'power3.out' });
     const ddy = gsap.quickTo(dot, 'y', { duration: 0.38, ease: 'power3.out' });
     let dotShown = false;
+    let dotOn = false;   // 红点默认关,齿轮设置里打开
     addEventListener('pointermove', (e) => {
+      if (!dotOn) return;
       if (!dotShown) {
         dotShown = true;
         gsap.set(dot, { x: e.clientX, y: e.clientY });
@@ -256,8 +259,17 @@ async function boot() {
       if (e.target.closest('a, button, .card, .wm-bar')) dotHover(false);
     });
     document.addEventListener('pointerleave', () => gsap.to(dot, { opacity: 0, duration: 0.2 }));
-    document.addEventListener('pointerenter', () => { if (dotShown) gsap.to(dot, { opacity: 1, duration: 0.2 }); });
+    document.addEventListener('pointerenter', () => { if (dotOn && dotShown) gsap.to(dot, { opacity: 1, duration: 0.2 }); });
+    // 设置齿轮:红点开关;BGM 开关在 settings.js 内自闭环
+    initSettings({
+      onRedDot: (on) => {
+        dotOn = on;
+        if (!on) { dotShown = false; gsap.to(dot, { opacity: 0, duration: 0.2 }); }
+      },
+    });
   }
+  // 触屏没有小红点,但齿轮(BGM 开关)照常可用
+  if (IS_TOUCH) initSettings();
 
   // about 白卡:悬停 3D 倾斜(TiltedCard 式:卡体随指针偏转,标题/正文分层浮起)
   // 卡未完全到位(淡入未完成)时旋转钉 0,到位后才平滑接入——消除半路"切换"的卡顿
