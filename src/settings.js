@@ -7,7 +7,7 @@ const store = {
   set(s) { try { localStorage.setItem('xy-settings', JSON.stringify(s)); } catch { /* 隐私模式忽略 */ } },
 };
 
-export const settings = { redDot: true, bgm: false };
+export const settings = { redDot: true, bgm: true };
 
 export function initSettings({ onRedDot } = {}) {
   const gear = document.getElementById('settings-gear');
