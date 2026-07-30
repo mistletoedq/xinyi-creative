@@ -13,6 +13,7 @@ const UI = [
   { sel: '#nav-work', o: 1, scramble: true },
   { sel: '#nav-about', o: 1, scramble: true },
   { sel: '#contact', o: 1, scramble: true },
+  { sel: '#nav-toggle', o: 1 },   // 竖屏汉堡钮:同样淡入(不跑 scramble)
   { sel: '#coords', o: 0.55, scramble: true },
   { sel: '#scroll-hint', o: 0.45, scramble: true },
   { sel: '#gridlines', o: 1 },

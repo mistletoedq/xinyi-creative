@@ -702,6 +702,7 @@ a.cm-value { color: var(--ink); text-underline-offset: 4px; }
 html.intro-pending .hero-item,
 html.intro-pending #brand,
 html.intro-pending .nav-link,
+html.intro-pending #nav-toggle,
 html.intro-pending #contact,
 html.intro-pending #coords,
 html.intro-pending #scroll-hint,
