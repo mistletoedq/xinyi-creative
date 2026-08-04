@@ -70,7 +70,11 @@ export const CASES = [
       { p: '除了这个网站,同一条路上还有几个小实验:' },
       { video: 'assets/case-media/vibe-liquid.mp4', cap: '流体文字实验室:液态金属质感的动态字体' },
       { video: 'assets/case-media/vibe-rooted.mp4', cap: 'Rooted 有机商店:植物品牌的滚动叙事页' },
-      { video: 'assets/case-media/vibe-game.mp4', cap: '开发中的 3D 小游戏《Swordrealm of the Nine Heavens》' },
+      { video: 'assets/case-media/vibe-game.mp4', cap: '3D 武侠 MMORPG 小游戏《九霄剑域 · 凌云诀》(Swordrealm of the Nine Heavens)' },
+      { links: [
+        { label: '在线试玩:浏览器直接运行的武侠 MMO', url: 'https://mistletoedq.github.io/swordrealm-nine-heavens/' },
+        { label: '源码仓库:swordrealm-nine-heavens', url: 'https://github.com/mistletoedq/swordrealm-nine-heavens' },
+      ], cap: 'GitHub Pages 部署' },
     ],
   },
   {
