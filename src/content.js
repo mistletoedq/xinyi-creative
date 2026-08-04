@@ -73,7 +73,6 @@ export const CASES = [
       { video: 'assets/case-media/vibe-game.mp4', cap: '3D 武侠 MMORPG 小游戏《九霄剑域 · 凌云诀》(Swordrealm of the Nine Heavens)' },
       { links: [
         { label: '在线试玩:浏览器直接运行的武侠 MMO', url: 'https://mistletoedq.github.io/swordrealm-nine-heavens/' },
-        { label: '源码仓库:swordrealm-nine-heavens', url: 'https://github.com/mistletoedq/swordrealm-nine-heavens' },
       ], cap: 'GitHub Pages 部署' },
       { video: 'assets/case-media/vibe-lorenz.mp4', cap: '洛伦兹吸引子:GLSL 粒子拖尾与辉光绘出的混沌蝴蝶' },
       { video: 'assets/case-media/vibe-museum.mp4', cap: '无限递归美术馆:展厅在一道道门中无限生长' },
